@@ -420,6 +420,11 @@ export interface Category {
 export interface User {
   id: number;
   name?: string | null;
+  role: 'super-admin' | 'editor' | 'customer' | 'musician' | 'guest';
+  /**
+   * Set automatically when customer checks out
+   */
+  stripeCustomerId?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -1339,6 +1344,8 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  role?: T;
+  stripeCustomerId?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
