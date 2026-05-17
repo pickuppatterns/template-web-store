@@ -12,11 +12,13 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
-      NEXT_PUBLIC_SERVER_URL: http://localhost:3000
-      CRON_SECRET: test-cron-secret
-      PREVIEW_SECRET: test-preview-secret
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
+        NEXT_PUBLIC_SERVER_URL: http://localhost:3000
+        CRON_SECRET: test-cron-secret
+        PREVIEW_SECRET: test-preview-secret
+        CI: true
 
     steps:
       - name: Checkout code
@@ -32,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: Run integration tests
-        run: npx vitest run --config ./vitest.config.mts --pool=forks --poolOptions.forks.singleFork=true
+        run: npm run test:int
   lint:
     name: Lint
     runs-on: ubuntu-latest

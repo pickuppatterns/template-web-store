@@ -10,11 +10,6 @@ export default defineConfig({
     include: ['tests/int/**/*.int.spec.ts'],
     hookTimeout: 60000,
     testTimeout: 60000,
-    pool: 'forks',
-    poolOptions: {
-      forks: {
-        singleFork: true,
-      },
-    },
+    fileParallelism: false,
   },
 })

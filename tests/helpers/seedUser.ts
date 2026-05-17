@@ -15,10 +15,6 @@ export const testAdminUser = {
   role: 'super-admin' as const,
 }
 
-/**
- * Seeds a test user with a unique email per test suite.
- * Pass a unique suffix to avoid collisions between parallel test files.
- */
 export async function seedTestUser(suffix = 'default'): Promise<void> {
   const payload = await getPayload({ config })
   const email = `test-${suffix}@payloadcms.com`
@@ -26,7 +22,10 @@ export async function seedTestUser(suffix = 'default'): Promise<void> {
   await payload.delete({
     collection: 'users',
     where: { email: { equals: email } },
+    overrideAccess: true,
   })
+
+  await new Promise((resolve) => setTimeout(resolve, 500))
 
   await payload.create({
     collection: 'users',
@@ -46,7 +45,10 @@ export async function seedAdminUser(suffix = 'default'): Promise<void> {
   await payload.delete({
     collection: 'users',
     where: { email: { equals: email } },
+    overrideAccess: true,
   })
+
+  await new Promise((resolve) => setTimeout(resolve, 500))
 
   await payload.create({
     collection: 'users',
@@ -61,16 +63,22 @@ export async function seedAdminUser(suffix = 'default'): Promise<void> {
 
 export async function cleanupTestUser(suffix = 'default'): Promise<void> {
   const payload = await getPayload({ config })
+  const email = `test-${suffix}@payloadcms.com`
+
   await payload.delete({
     collection: 'users',
-    where: { email: { equals: `test-${suffix}@payloadcms.com` } },
+    where: { email: { equals: email } },
+    overrideAccess: true,
   })
 }
 
 export async function cleanupAdminUser(suffix = 'default'): Promise<void> {
   const payload = await getPayload({ config })
+  const email = `admin-${suffix}@payloadcms.com`
+
   await payload.delete({
     collection: 'users',
-    where: { email: { equals: `admin-${suffix}@payloadcms.com` } },
+    where: { email: { equals: email } },
+    overrideAccess: true,
   })
 }
