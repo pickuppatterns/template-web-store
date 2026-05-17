@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -23,11 +23,7 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true)
   const [checkingOut, setCheckingOut] = useState(false)
 
-  useEffect(() => {
-    fetchCart()
-  }, [])
-
-  async function fetchCart() {
+  const fetchCart = useCallback(async () => {
     try {
       const res = await fetch('/api/cart')
       if (res.status === 401) {
@@ -41,11 +37,15 @@ export default function CartPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [router])
+
+  useEffect(() => {
+    fetchCart()
+  }, [fetchCart])
 
   async function removeItem(id: string) {
     await fetch(`/api/cart?id=${id}`, { method: 'DELETE' })
-    setCartItems((prev) => prev.filter((item) => item.id !== id))
+    setCartItems(prev => prev.filter(item => item.id !== id))
   }
 
   async function handleCheckout() {
@@ -55,7 +55,7 @@ export default function CartPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: cartItems.map((item) => ({
+          items: cartItems.map(item => ({
             productId: item.product.id,
             quantity: item.quantity,
           })),
@@ -72,7 +72,10 @@ export default function CartPage() {
     }
   }
 
-  const total = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+  const total = cartItems.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0,
+  )
 
   if (loading) {
     return (
@@ -85,7 +88,6 @@ export default function CartPage() {
   return (
     <main className="max-w-3xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-medium mb-8">Your cart</h1>
-
       {cartItems.length === 0 ? (
         <div data-testid="cart-empty">
           <p className="text-gray-500 mb-4">Your cart is empty.</p>
@@ -96,7 +98,7 @@ export default function CartPage() {
       ) : (
         <div>
           <div className="flex flex-col gap-4 mb-8">
-            {cartItems.map((item) => {
+            {cartItems.map(item => {
               const imageUrl = item.product.images?.[0]?.image?.url
               return (
                 <div
@@ -106,21 +108,24 @@ export default function CartPage() {
                 >
                   <div className="w-16 h-16 bg-gray-100 rounded relative overflow-hidden flex-shrink-0">
                     {imageUrl ? (
-                      <Image src={imageUrl} alt={item.product.name} fill className="object-cover" />
+                      <Image
+                        src={imageUrl}
+                        alt={item.product.name}
+                        fill
+                        className="object-cover"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
                         No image
                       </div>
                     )}
                   </div>
-
                   <div className="flex-1">
                     <p className="font-medium text-sm">{item.product.name}</p>
                     <p className="text-gray-500 text-sm">
-                      Qty: {item.quantity} × ${((item.product.price ?? 0) / 100).toFixed(2)}
+                      Qty: {item.quantity}
                     </p>
                   </div>
-
                   <div className="text-right">
                     <p className="font-medium text-sm">
                       ${((item.product.price * item.quantity) / 100).toFixed(2)}
@@ -136,12 +141,12 @@ export default function CartPage() {
               )
             })}
           </div>
-
           <div className="border-t pt-4 flex justify-between items-center mb-6">
             <span className="font-medium">Total</span>
-            <span className="font-medium text-lg">${(total / 100).toFixed(2)}</span>
+            <span className="font-medium text-lg">
+              ${(total / 100).toFixed(2)}
+            </span>
           </div>
-
           <button
             onClick={handleCheckout}
             disabled={checkingOut}
