@@ -66,6 +66,9 @@ jobs:
       NEXT_PUBLIC_SERVER_URL: http://localhost:3000
       CRON_SECRET: test-cron-secret
       PREVIEW_SECRET: test-preview-secret
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
 
     steps:
       - name: Checkout code
