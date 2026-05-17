@@ -12,13 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
-        NEXT_PUBLIC_SERVER_URL: http://localhost:3000
-        CRON_SECRET: test-cron-secret
-        PREVIEW_SECRET: test-preview-secret
-        CI: true
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
+      NEXT_PUBLIC_SERVER_URL: http://localhost:3000
+      CRON_SECRET: test-cron-secret
+      PREVIEW_SECRET: test-preview-secret
+      CI: true
 
     steps:
       - name: Checkout code
@@ -35,6 +34,7 @@ jobs:
 
       - name: Run integration tests
         run: npm run test:int
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
