@@ -69,6 +69,9 @@ jobs:
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
       NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+      BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
+      AUTH_GOOGLE_ID: placeholder
+      AUTH_GOOGLE_SECRET: placeholder
 
     steps:
       - name: Checkout code
