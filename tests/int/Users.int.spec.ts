@@ -17,11 +17,11 @@ describe('Users collection', () => {
   beforeAll(async () => {
     const payloadConfig = await config
     payload = await getPayload({ config: payloadConfig })
-    await seedTestUser()
+    await seedTestUser('users')
   })
 
   afterAll(async () => {
-    await cleanupTestUser()
+    await cleanupTestUser('users')
   })
 
   describe('roles', () => {

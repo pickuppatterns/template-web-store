@@ -16,11 +16,11 @@ describe('Products collection', () => {
   beforeAll(async () => {
     const payloadConfig = await config
     payload = await getPayload({ config: payloadConfig })
-    await seedTestUser()
+    await seedTestUser('products')
   })
 
   afterAll(async () => {
-    await cleanupTestUser()
+    await cleanupTestUser('products')
     // TODO: clean up any products created during tests
     // await payload.delete({
     //   collection: 'products',

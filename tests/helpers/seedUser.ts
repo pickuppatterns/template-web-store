@@ -4,43 +4,73 @@ import config from '../../src/payload.config.js'
 export const testUser = {
   email: 'dev@payloadcms.com',
   password: 'test',
+  name: 'Test User',
+  role: 'customer' as const,
+}
+
+export const testAdminUser = {
+  email: 'admin@payloadcms.com',
+  password: 'test',
+  name: 'Test Admin',
+  role: 'super-admin' as const,
 }
 
 /**
- * Seeds a test user for e2e admin tests.
+ * Seeds a test user with a unique email per test suite.
+ * Pass a unique suffix to avoid collisions between parallel test files.
  */
-export async function seedTestUser(): Promise<void> {
+export async function seedTestUser(suffix = 'default'): Promise<void> {
   const payload = await getPayload({ config })
+  const email = `test-${suffix}@payloadcms.com`
 
-  // Delete existing test user if any
   await payload.delete({
     collection: 'users',
-    where: {
-      email: {
-        equals: testUser.email,
-      },
-    },
+    where: { email: { equals: email } },
   })
 
-  // Create fresh test user
   await payload.create({
     collection: 'users',
-    data: testUser,
+    data: {
+      email,
+      password: 'test',
+      name: 'Test User',
+      role: 'customer' as const,
+    },
   })
 }
 
-/**
- * Cleans up test user after tests
- */
-export async function cleanupTestUser(): Promise<void> {
+export async function seedAdminUser(suffix = 'default'): Promise<void> {
   const payload = await getPayload({ config })
+  const email = `admin-${suffix}@payloadcms.com`
 
   await payload.delete({
     collection: 'users',
-    where: {
-      email: {
-        equals: testUser.email,
-      },
+    where: { email: { equals: email } },
+  })
+
+  await payload.create({
+    collection: 'users',
+    data: {
+      email,
+      password: 'test',
+      name: 'Test Admin',
+      role: 'super-admin' as const,
     },
+  })
+}
+
+export async function cleanupTestUser(suffix = 'default'): Promise<void> {
+  const payload = await getPayload({ config })
+  await payload.delete({
+    collection: 'users',
+    where: { email: { equals: `test-${suffix}@payloadcms.com` } },
+  })
+}
+
+export async function cleanupAdminUser(suffix = 'default'): Promise<void> {
+  const payload = await getPayload({ config })
+  await payload.delete({
+    collection: 'users',
+    where: { email: { equals: `admin-${suffix}@payloadcms.com` } },
   })
 }
