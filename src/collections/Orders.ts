@@ -8,7 +8,7 @@ export const Orders: CollectionConfig = {
   },
   access: {
     read: ({ req }) => {
-      if (req.user?.role === 'admin') return true
+      if (req.user?.role === 'super-admin') return true
       return {
         customer: {
           equals: req.user?.id,
@@ -16,8 +16,8 @@ export const Orders: CollectionConfig = {
       }
     },
     create: () => true,
-    update: ({ req }) => req.user?.role === 'admin',
-    delete: ({ req }) => req.user?.role === 'admin',
+    update: ({ req }) => req.user?.role === 'super-admin',
+    delete: ({ req }) => req.user?.role === 'super-admin',
   },
   fields: [
     {
