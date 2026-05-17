@@ -15,19 +15,18 @@ export const testAdminUser = {
   role: 'super-admin' as const,
 }
 
-export async function seedTestUser(suffix = 'default'): Promise<void> {
+// Tracks emails created per suffix so cleanup can find them
+const createdUsers: Record<string, string> = {}
+const createdAdmins: Record<string, string> = {}
+
+export async function seedTestUser(suffix = 'default'): Promise<{ email: string; id: string }> {
   const payload = await getPayload({ config })
-  const email = `test-${suffix}@payloadcms.com`
 
-  await payload.delete({
-    collection: 'users',
-    where: { email: { equals: email } },
-    overrideAccess: true,
-  })
+  // Timestamp guarantees a unique email every run — no collision with previous runs
+  const email = `test-${suffix}-${Date.now()}@payloadcms.com`
+  createdUsers[suffix] = email
 
-  await new Promise((resolve) => setTimeout(resolve, 500))
-
-  await payload.create({
+  const user = await payload.create({
     collection: 'users',
     data: {
       email,
@@ -36,11 +35,14 @@ export async function seedTestUser(suffix = 'default'): Promise<void> {
       role: 'customer' as const,
     },
   })
+
+  return { email, id: String(user.id) }
 }
 
-export async function seedAdminUser(suffix = 'default'): Promise<void> {
+export async function cleanupTestUser(suffix = 'default'): Promise<void> {
   const payload = await getPayload({ config })
-  const email = `admin-${suffix}@payloadcms.com`
+  const email = createdUsers[suffix]
+  if (!email) return
 
   await payload.delete({
     collection: 'users',
@@ -48,9 +50,16 @@ export async function seedAdminUser(suffix = 'default'): Promise<void> {
     overrideAccess: true,
   })
 
-  await new Promise((resolve) => setTimeout(resolve, 500))
+  delete createdUsers[suffix]
+}
 
-  await payload.create({
+export async function seedAdminUser(suffix = 'default'): Promise<{ email: string; id: string }> {
+  const payload = await getPayload({ config })
+
+  const email = `admin-${suffix}-${Date.now()}@payloadcms.com`
+  createdAdmins[suffix] = email
+
+  const user = await payload.create({
     collection: 'users',
     data: {
       email,
@@ -59,26 +68,20 @@ export async function seedAdminUser(suffix = 'default'): Promise<void> {
       role: 'super-admin' as const,
     },
   })
-}
 
-export async function cleanupTestUser(suffix = 'default'): Promise<void> {
-  const payload = await getPayload({ config })
-  const email = `test-${suffix}@payloadcms.com`
-
-  await payload.delete({
-    collection: 'users',
-    where: { email: { equals: email } },
-    overrideAccess: true,
-  })
+  return { email, id: String(user.id) }
 }
 
 export async function cleanupAdminUser(suffix = 'default'): Promise<void> {
   const payload = await getPayload({ config })
-  const email = `admin-${suffix}@payloadcms.com`
+  const email = createdAdmins[suffix]
+  if (!email) return
 
   await payload.delete({
     collection: 'users',
     where: { email: { equals: email } },
     overrideAccess: true,
   })
+
+  delete createdAdmins[suffix]
 }
