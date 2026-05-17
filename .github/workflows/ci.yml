@@ -32,8 +32,7 @@ jobs:
         run: npm ci
 
       - name: Run integration tests
-        run: npm run test:int
-
+        run: npx vitest run --config ./vitest.config.mts --pool=forks --poolOptions.forks.singleFork=true
   lint:
     name: Lint
     runs-on: ubuntu-latest
